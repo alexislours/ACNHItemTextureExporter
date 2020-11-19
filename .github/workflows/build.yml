@@ -1,0 +1,24 @@
+name: Build and Deploy
+on:
+  push:
+    tags: 'v*'
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    name: Build & Release Project
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+      - run: dotnet build --configuration Release
+      - uses: thedoctor0/zip-release@master
+        with:
+          filename: 'ACNHItemTextureExporter.zip'
+          directory: 'ACNHItemTextureExporter/bin/Release/netcoreapp3.1/'
+      - uses: meeDamian/github-release@2.0
+        with:
+         token: ${{ secrets.GITHUB_TOKEN }}
+         gzip: false
+         files: >
+           ACNHItemTextureExporter/bin/Release/netcoreapp3.1/ACNHItemTextureExporter.zip
